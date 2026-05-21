@@ -1,68 +1,84 @@
-@echo off
-REM PostgreSQL Setup Script for Riviggy Dineout Feature (Windows)
-REM Run this script to set up PostgreSQL for the table booking feature
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+jspm_packages/
+web_modules/
+bower_components/
 
-echo.
-echo 🍽️  Riviggy Dineout - PostgreSQL Setup (Windows)
-echo ================================================
-echo.
+# Environment variables
+.env
+.env.*
+!.env.example
 
-REM Check if PostgreSQL is installed
-psql --version >nul 2>&1
-if errorlevel 1 (
-    echo ❌ PostgreSQL is not installed!
-    echo.
-    echo Please install PostgreSQL from:
-    echo https://www.postgresql.org/download/windows/
-    echo.
-    pause
-    exit /b 1
-)
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-echo ✅ PostgreSQL found!
-psql --version
-echo.
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-REM Get user input
-set /p db_password="Enter PostgreSQL password (or press Enter for 'password'): "
-if "%db_password%"=="" set db_password=password
+# Coverage
+coverage/
+*.lcov
+.nyc_output/
+lib-cov/
 
-set /p db_name="Enter database name (or press Enter for 'riviggy_dineout'): "
-if "%db_name%"=="" set db_name=riviggy_dineout
+# Build outputs
+dist/
+build/Release
+.output/
+out/
+.next/
+.nuxt/
 
-set /p db_user="Enter database user (or press Enter for 'riviggy_user'): "
-if "%db_user%"=="" set db_user=riviggy_user
+# Cache
+.cache/
+.parcel-cache/
+.npm/
+.eslintcache
+.stylelintcache
+.vite/
+.temp/
+.svelte-kit/
+**/.vitepress/dist
+**/.vitepress/cache
 
-echo.
-echo Creating database and user...
-echo.
+# Misc
+*.zip
+*.downloading
+*.tgz
+*.tsbuildinfo
+.yarn-integrity
+.lock-wscript
+.grunt/
+.dynamodb/
+.firebase/
+.fusebox/
+.serverless/
+.docusaurus/
+.tern-port
+.vscode-test/
+.pnpm-store/
+.node_repl_history
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
-REM Create database and user
-psql -U postgres -c "CREATE DATABASE %db_name%;"
-psql -U postgres -c "CREATE USER %db_user% WITH PASSWORD '%db_password%';"
-psql -U postgres -c "ALTER ROLE %db_user% SET client_encoding TO 'utf8';"
-psql -U postgres -c "ALTER ROLE %db_user% SET default_transaction_isolation TO 'read committed';"
-psql -U postgres -c "ALTER ROLE %db_user% SET default_transaction_deferrable TO on;"
-psql -U postgres -c "ALTER ROLE %db_user% SET default_transaction_read_only TO off;"
-psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE %db_name% TO %db_user%;"
-psql -U postgres -d %db_name% -c "GRANT ALL PRIVILEGES ON SCHEMA public TO %db_user%;"
+# Yarn v3
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
-if errorlevel 0 (
-    echo.
-    echo ✅ Database setup completed successfully!
-    echo.
-    echo 📝 Update your .env file with:
-    echo DB_HOST=localhost
-    echo DB_PORT=5432
-    echo DB_NAME=%db_name%
-    echo DB_USER=%db_user%
-    echo DB_PASSWORD=%db_password%
-    echo.
-    echo Then run: npm run dev
-) else (
-    echo.
-    echo ❌ Error setting up database!
-    echo Make sure you're running this as administrator.
-)
-
-pause
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
