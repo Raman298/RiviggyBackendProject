@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Table - Riviggy Dineout</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box }
+
+        :root{
+            --accent:#FF8C42;
+            --muted:#666;
+            --card-shadow: 0 10px 30px rgba(15,15,15,0.06);
+        }
+
+        body {
+            font-family: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fafafa;
+            color: #222;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            min-height:100vh;
+        }
+
+        .navbar-top{ position:relative; background:transparent; padding:18px 36px; display:flex; justify-content:space-between; align-items:center; z-index:40 }
+
+        .logo img{ height:44px; display:block }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #FF8C42;
+        }
+
+        .page-inner{ max-width:1200px; margin:28px auto; padding:0 20px }
+        .container{ background:transparent; padding:0; margin-top:12px }
+
+        .hero{ height:380px; border-radius:24px; overflow:hidden; position:relative; background:linear-gradient(180deg,#222 0%, #0f1720 100%); display:flex; align-items:center; padding:30px }
+
+        .hero::after{ content:''; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 100%) }
+
+        .hero-inner{ position:relative; z-index:2; display:flex; gap:24px; align-items:center; width:100% }
+
+        .hero-title{ color:#fff; font-size:40px; line-height:1.05; font-weight:700; max-width:68% }
+
+        .hero-right{ margin-left:auto; width:38%; height:100%; display:flex; align-items:center; justify-content:center }
+
+        .hero-right img{ width:100%; height:100%; object-fit:cover; border-radius:16px }
+
+        h1{ color:var(--accent); margin-bottom:10px }
+        .subtitle{ color:var(--muted); margin-bottom:18px }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #FF8C42;
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+        }
+
+        input[type="date"],
+        input[type="time"],
+        select {
+            cursor: pointer;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 107, 53, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f5c6cb;
+        }
+
+        .booking-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .booking-info strong {
+            color: #333;
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .success-container h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+
+        .booking-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .booking-details p {
+            margin: 8px 0;
+            color: #666;
+        }
+
+        .booking-details strong {
+            color: #333;
+        }
+
+        .restaurant-section{ margin-top:22px }
+        .section-title{ font-size:18px; font-weight:800; color:#222; margin-bottom:16px }
+        .restaurant-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:22px }
+
+        .filters-row {
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            margin: 18px 0;
+            align-items:center;
+        }
+
+        .chip{ background:#fff; border-radius:999px; padding:10px 18px; border:1px solid #eee; box-shadow:0 6px 18px rgba(10,10,10,0.03); font-weight:700; cursor:pointer }
+        .chip.secondary{ background:#fff; color:var(--muted); font-weight:600 }
+
+        .restaurant-card{ background:#fff; border-radius:14px; overflow:hidden; box-shadow:var(--card-shadow); cursor:pointer; transition:transform .18s ease, box-shadow .18s ease }
+        .restaurant-card:hover{ transform:translateY(-6px); box-shadow: 0 20px 40px rgba(15,15,15,0.08) }
+        .restaurant-card.selected{ outline:3px solid rgba(255,140,66,0.12) }
+        .restaurant-name{ font-size:18px; font-weight:800; color:#111; margin-bottom:6px }
+        .restaurant-name-on-image{ font-size:18px; font-weight:800; color:#fff; margin-bottom:6px }
+
+        .restaurant-meta {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .card-image{ height:180px; width:100%; position:relative; background-color:#222; overflow:hidden }
+
+        .card-image-img{ width:100%; height:100%; object-fit:cover; display:block }
+
+        .card-top-overlay{ position:absolute; left:14px; bottom:12px; color:#fff; text-shadow:0 3px 10px rgba(0,0,0,0.6); z-index:2 }
+
+        .card-image::before{
+            content:'';
+            position:absolute;
+            left:0;
+            right:0;
+            bottom:0;
+            height:52%;
+            background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.72) 100%);
+            z-index:1;
+        }
+
+        .rating-badge{ display:inline-block; background:#00b894; color:#fff; padding:6px 10px; border-radius:14px; font-weight:800; font-size:13px; margin-left:8px }
+
+        .card-body { padding:12px }
+
+        .book-btn{ display:inline-block; margin-top:12px; background:var(--accent); color:#fff; padding:10px 14px; border-radius:10px; font-weight:800; border:none; cursor:pointer }
+
+        .helper-text {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .selected-strip {
+            background: #fff6ef;
+            border: 1px solid #ffd5b8;
+            color: #8a4d1f;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-top">
+        <div class="logo"><img src="/assets/logo.jpeg" alt="Riviggy logo"></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/api/dineout/bookings-page">My Bookings</a>
+            <a href="/api/dineout">Back</a>
+        </div>
+    </div>
+
+    <div class="page-inner">
+        <div class="hero">
+            <div class="hero-inner">
+                <div>
+                    <div style="color:#ffd7b8;font-weight:700;margin-bottom:8px;">Dineout</div>
+                    <div class="hero-title">Explore Top Dining Out Restaurants
+                        
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <img src="https://source.unsplash.com/1600x900/?restaurants" alt="Restaurants" onerror="this.onerror=null;this.src='/assets/restaurant1.jpg'">
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+        <% if (typeof success !== 'undefined' && success) { %>
+        <div class="success-container">
+            <div class="success-icon">✅</div>
+            <h2>Booking Confirmed!</h2>
+            <p>Your table has been booked successfully.</p>
+            <div class="booking-details">
+                <p><strong>Booking ID:</strong> <%= bookingId %></p>
+                <p><strong>Date:</strong> <%= bookingDate %></p>
+                <p><strong>Time:</strong> <%= bookingTime %></p>
+                <p><strong>Guests:</strong> <%= guestCount %></p>
+                <p><strong>Status:</strong> Confirmed</p>
+            </div>
+            <a href="/api/dineout"><button style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">Book Another Table</button></a>
+        </div>
+        <% } else { %>
+        <h1>🍽️ Book Your Table</h1>
+        <p class="subtitle">Reserve a table at your favorite restaurant</p>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+        <div class="error-message"><%= error %></div>
+        <% } %>
+
+        <div class="booking-info">
+            <strong>📋 Booking Information:</strong><br>
+            Select your preferred date, time, and number of guests. Our restaurants will confirm your booking within 30 minutes.
+        </div>
+
+        <div class="restaurant-section">
+            <p class="section-title">Choose a restaurant to continue</p>
+            <div class="filters-row">
+                <div class="chip" data-filter="reset">Filter ⚙️</div>
+                <div class="chip secondary" data-filter="sort-rating">Sort By ▾</div>
+                <div class="chip" data-filter="book">Book a table</div>
+                <div class="chip secondary" data-filter="within-5km">Within 5km</div>
+                <div class="chip secondary" data-filter="rating-4">Rating 4+</div>
+                <div class="chip secondary" data-filter="pure-veg">Pure Veg</div>
+            </div>
+
+            <div id="restaurantGrid" class="restaurant-grid"></div>
+            <p id="restaurantHint" class="helper-text">Pick any restaurant to open the booking form.</p>
+        </div>
+
+        <div id="bookingFormWrapper" class="hidden">
+            <div id="selectedRestaurantStrip" class="selected-strip"></div>
+
+            <form action="/api/dineout/book" method="POST" onsubmit="validateForm(event)">
+                <div class="form-group">
+                    <label for="restaurantName">Restaurant Name *</label>
+                    <input type="text" id="restaurantName" name="restaurantName" readonly required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookingDate">Booking Date *</label>
+                        <input type="date" id="bookingDate" name="bookingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookingTime">Booking Time *</label>
+                        <input type="time" id="bookingTime" name="bookingTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="guestCount">Number of Guests *</label>
+                        <select id="guestCount" name="guestCount" required>
+                            <option value="">Select number of guests</option>
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4 Guests</option>
+                            <option value="5">5 Guests</option>
+                            <option value="6">6 Guests</option>
+                            <option value="7">7 Guests</option>
+                            <option value="8">8 Guests</option>
+                            <option value="9">9 Guests</option>
+                            <option value="10+">10+ Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cuisineType">Cuisine Type *</label>
+                        <select id="cuisineType" name="cuisineType" required>
+                            <option value="">Select cuisine</option>
+                            <option value="Indian">Indian</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Chinese">Chinese</option>
+                            <option value="Mexican">Mexican</option>
+                            <option value="Continental">Continental</option>
+                            <option value="Fast Food">Fast Food</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="userName">Your Name *</label>
+                    <input type="text" id="userName" name="userName" placeholder="Your full name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="userEmail">Email Address *</label>
+                        <input type="email" id="userEmail" name="userEmail" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userPhone">Phone Number *</label>
+                        <input type="tel" id="userPhone" name="userPhone" placeholder="10-digit phone number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="specialRequests">Special Requests (Optional)</label>
+                    <textarea id="specialRequests" name="specialRequests" placeholder="Any special requests? (e.g., window seat, birthday celebration)" rows="3"></textarea>
+                </div>
+
+                <button type="submit">Confirm Booking</button>
+            </form>
+        </div>
+        <% } %>
+        </div>
+    </div>
+
+    <script>
+        const fallbackRestaurants = [
+            { name: 'Spice Garden', cuisine: 'Indian', rating: 4.3, eta: '30-35 min' },
+            { name: 'The Italian Kitchen', cuisine: 'Italian', rating: 4.5, eta: '25-30 min' },
+            { name: 'Dragon Bowl', cuisine: 'Chinese', rating: 4.1, eta: '20-25 min' },
+            { name: 'Casa Mexicana', cuisine: 'Mexican', rating: 4.2, eta: '30-40 min' }
+        ];
+
+        const restaurantGrid = document.getElementById('restaurantGrid');
+        const bookingFormWrapper = document.getElementById('bookingFormWrapper');
+        const restaurantNameInput = document.getElementById('restaurantName');
+        const cuisineTypeSelect = document.getElementById('cuisineType');
+        const selectedRestaurantStrip = document.getElementById('selectedRestaurantStrip');
+        const restaurantHint = document.getElementById('restaurantHint');
+        const bookingDateInput = document.getElementById('bookingDate');
+
+        if (bookingDateInput) {
+            bookingDateInput.min = new Date().toISOString().split('T')[0];
+        }
+
+        let allRestaurants = [];
+        const imageVersion = 'v=1';
+        const localRestaurantImages = [
+            '/assets/restaurant1.jpg',
+            '/assets/restaurant2.jpg',
+            '/assets/restaurant3.jpg'
+        ].map((imgPath) => `${imgPath}?${imageVersion}`);
+
+        function withCacheBust(url) {
+            if (!url) return '';
+            return url.includes('?') ? `${url}&${imageVersion}` : `${url}?${imageVersion}`;
+        }
+
+        function resolveImageUrl(url) {
+            if (!url) return '';
+            if (url.startsWith('http://') || url.startsWith('https://')) return withCacheBust(url);
+            if (url.startsWith('/')) return withCacheBust(url);
+            return withCacheBust(`/${url}`);
+        }
+
+        if (restaurantGrid && bookingFormWrapper) {
+            loadRestaurants();
+        }
+
+        async function loadRestaurants() {
+            try {
+                const response = await fetch('/api/dineout/restaurants');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch restaurants');
+                }
+
+                const data = await response.json();
+                const restaurants = Array.isArray(data.restaurants) ? data.restaurants : [];
+
+                if (restaurants.length > 0) {
+                    allRestaurants = restaurants.map(mapRestaurant);
+                    renderRestaurantCards(allRestaurants);
+                    return;
+                }
+            } catch (error) {
+                console.warn('Using fallback restaurant list for dineout page:', error.message);
+            }
+
+            allRestaurants = fallbackRestaurants.map((r, idx) => ({ ...r, coverImage: localRestaurantImages[idx % localRestaurantImages.length] }));
+            renderRestaurantCards(allRestaurants);
+        }
+
+        function mapRestaurant(restaurant) {
+            let cuisine = 'Other';
+            if (Array.isArray(restaurant.cuisine) && restaurant.cuisine.length > 0) {
+                cuisine = restaurant.cuisine[0];
+            } else if (typeof restaurant.cuisine === 'string' && restaurant.cuisine.trim()) {
+                cuisine = restaurant.cuisine.trim();
+            }
+
+            return {
+                name: restaurant.name || 'Restaurant',
+                cuisine,
+                rating: typeof restaurant.rating === 'number' ? restaurant.rating : 4.0,
+                eta: restaurant.deliveryTime ? `${restaurant.deliveryTime} min` : '30-40 min',
+                address: restaurant.address || '',
+                priceRange: restaurant.priceRange || '',
+                coverImage: resolveImageUrl(restaurant.coverImage || '')
+            };
+        }
+
+        function renderRestaurantCards(restaurants) {
+            restaurantGrid.innerHTML = '';
+
+            restaurants.forEach((restaurant, index) => {
+                const card = document.createElement('div');
+                card.className = 'restaurant-card';
+                card.dataset.name = restaurant.name;
+                card.dataset.cuisine = restaurant.cuisine || 'Other';
+
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'card-image';
+                let imageUrl = restaurant.coverImage || localRestaurantImages[index % localRestaurantImages.length];
+                const imageEl = document.createElement('img');
+                imageEl.className = 'card-image-img';
+                imageEl.alt = restaurant.name;
+                imageEl.src = imageUrl;
+                imageEl.onerror = () => {
+                    imageEl.onerror = null;
+                    imageEl.src = localRestaurantImages[index % localRestaurantImages.length];
+                };
+                imageDiv.appendChild(imageEl);
+
+                const overlay = document.createElement('div');
+                overlay.className = 'card-top-overlay';
+                const title = document.createElement('div');
+                title.className = 'restaurant-name-on-image';
+                title.textContent = restaurant.name;
+                const rating = document.createElement('span');
+                rating.className = 'rating-badge';
+                rating.textContent = (restaurant.rating || 4.0).toFixed(1);
+                overlay.appendChild(title);
+                overlay.appendChild(rating);
+                imageDiv.appendChild(overlay);
+
+                const body = document.createElement('div');
+                body.className = 'card-body';
+                const meta = document.createElement('div');
+                meta.className = 'restaurant-meta';
+                meta.innerHTML = `${restaurant.cuisine || 'Other'} • ${restaurant.address || 'Ambala'} <br> ${restaurant.priceRange || '₹500 for two'}`;
+
+                const bookBtn = document.createElement('button');
+                bookBtn.type = 'button';
+                bookBtn.className = 'book-btn';
+                bookBtn.textContent = 'Book a table';
+                bookBtn.addEventListener('click', () => selectRestaurant(card));
+
+                body.appendChild(meta);
+                body.appendChild(bookBtn);
+
+                card.appendChild(imageDiv);
+                card.appendChild(body);
+
+                card.addEventListener('click', (e) => {
+                    // only select when clicking card itself or image, not when clicking button (button already handles)
+                    if (e.target.tagName.toLowerCase() === 'button') return;
+                    selectRestaurant(card);
+                });
+
+                restaurantGrid.appendChild(card);
+            });
+        }
+
+        function applyFilter(filterType) {
+            let filtered = [...allRestaurants];
+
+            if (filterType === 'rating-4') {
+                filtered = filtered.filter(r => Number(r.rating) >= 4);
+            }
+            if (filterType === 'pure-veg') {
+                filtered = filtered.filter(r => (r.cuisine || '').toLowerCase().includes('veg'));
+            }
+            if (filterType === 'sort-rating' || filterType === 'within-5km') {
+                filtered.sort((a, b) => Number(b.rating) - Number(a.rating));
+            }
+
+            if (filterType === 'reset') {
+                filtered = [...allRestaurants];
+            }
+
+            if (filtered.length === 0) {
+                restaurantGrid.innerHTML = '<p class="helper-text">No restaurants match this filter. Try another one.</p>';
+                return;
+            }
+
+            renderRestaurantCards(filtered);
+        }
+
+        document.querySelectorAll('.filters-row .chip').forEach((chip) => {
+            chip.addEventListener('click', () => {
+                const filterType = chip.dataset.filter;
+                if (filterType === 'book') {
+                    document.getElementById('bookingFormWrapper').classList.remove('hidden');
+                    document.getElementById('bookingFormWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    return;
+                }
+                applyFilter(filterType);
+            });
+        });
+
+        function selectRestaurant(card) {
+            const selectedCards = document.querySelectorAll('.restaurant-card.selected');
+            selectedCards.forEach((item) => item.classList.remove('selected'));
+            card.classList.add('selected');
+
+            const selectedName = card.dataset.name;
+            const selectedCuisine = card.dataset.cuisine || 'Other';
+
+            if (restaurantNameInput) {
+                restaurantNameInput.value = selectedName;
+            }
+
+            if (selectedRestaurantStrip) {
+                selectedRestaurantStrip.textContent = `Selected Restaurant: ${selectedName}`;
+            }
+
+            if (cuisineTypeSelect) {
+                const cuisineOptionExists = Array.from(cuisineTypeSelect.options)
+                    .some((option) => option.value.toLowerCase() === selectedCuisine.toLowerCase());
+                cuisineTypeSelect.value = cuisineOptionExists ? selectedCuisine : 'Other';
+            }
+
+            bookingFormWrapper.classList.remove('hidden');
+            if (restaurantHint) {
+                restaurantHint.textContent = 'Restaurant selected. Complete the form below to confirm your booking.';
+            }
+
+            bookingFormWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function validateForm(event) {
+            if (!restaurantNameInput || !restaurantNameInput.value.trim()) {
+                event.preventDefault();
+                alert('Please select a restaurant first');
+                return false;
+            }
+
+            const bookingDate = new Date(document.getElementById('bookingDate').value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (bookingDate < today) {
+                event.preventDefault();
+                alert('Please select a future date');
+                return false;
+            }
+
+            const phone = document.getElementById('userPhone').value.replace(/\D/g, '');
+            if (phone.length !== 10) {
+                event.preventDefault();
+                alert('Please enter a valid 10-digit phone number');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>

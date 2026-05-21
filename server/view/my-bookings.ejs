@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Riviggy Dineout</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box }
+
+        :root{
+            --accent:#FF8C42;
+            --muted:#666;
+            --card-shadow: 0 10px 30px rgba(15,15,15,0.06);
+        }
+
+        body {
+            font-family: 'Syne', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fafafa;
+            color: #222;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+            min-height:100vh;
+        }
+
+        .navbar-top{ position:relative; background:transparent; padding:18px 36px; display:flex; justify-content:space-between; align-items:center; z-index:40 }
+
+        .logo img{ height:44px; display:block }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #FF8C42;
+        }
+
+        .page-inner{ max-width:1200px; margin:28px auto; padding:0 20px }
+
+        h1{ color:#222; font-size:32px; margin-bottom:24px }
+
+        .search-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 28px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-form input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .search-form input:focus {
+            outline: none;
+            border-color: #FF8C42;
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+        }
+
+        .search-form button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .search-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(255, 107, 53, 0.4);
+        }
+
+        .booking-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--accent);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(15,15,15,0.08);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .booking-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 4px;
+        }
+
+        .booking-id {
+            font-size: 12px;
+            color: #999;
+            font-family: monospace;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .booking-detail-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .booking-detail-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .booking-detail-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 16px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .btn-cancel:hover {
+            background: #f8d7da;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden { display:none !important; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f5c6cb;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f0f0f0;
+            border-top: 4px solid #FF8C42;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .booking-details {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form input {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-top">
+        <div class="logo"><img src="/assets/logo.jpeg" alt="Riviggy logo"></div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/api/dineout">Book Table</a>
+            <a href="/api/dineout/bookings-page">My Bookings</a>
+        </div>
+    </div>
+
+    <div class="page-inner">
+        <h1>📅 My Bookings</h1>
+
+        <div id="bookingsList">
+            <% if (Array.isArray(bookings) && bookings.length > 0) { %>
+                <% bookings.forEach(function(booking) { %>
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <div>
+                                <div class="booking-title"><%= booking.restaurant_name %></div>
+                                <div class="booking-id">Booking ID: <%= booking.booking_id %></div>
+                            </div>
+                            <span class="status-badge status-<%= booking.status.toLowerCase() %>"><%= booking.status %></span>
+                        </div>
+
+                        <div class="booking-details">
+                            <div class="booking-detail-item">
+                                <div class="booking-detail-label">📅 Date & Time</div>
+                                <div class="booking-detail-value"><%= new Date(booking.booking_date + 'T' + booking.booking_time).toLocaleString('en-IN') %></div>
+                            </div>
+                            <div class="booking-detail-item">
+                                <div class="booking-detail-label">👥 Guests</div>
+                                <div class="booking-detail-value"><%= booking.guest_count %></div>
+                            </div>
+                            <div class="booking-detail-item">
+                                <div class="booking-detail-label">🍽️ Cuisine</div>
+                                <div class="booking-detail-value"><%= booking.cuisine_type %></div>
+                            </div>
+                            <div class="booking-detail-item">
+                                <div class="booking-detail-label">👤 Name</div>
+                                <div class="booking-detail-value"><%= booking.user_name %></div>
+                            </div>
+                        </div>
+
+                        <% if (booking.special_requests) { %>
+                            <div class="booking-detail-item" style="grid-column:1/-1;">
+                                <div class="booking-detail-label">📝 Special Requests</div>
+                                <div class="booking-detail-value"><%= booking.special_requests %></div>
+                            </div>
+                        <% } %>
+
+                        <div class="booking-actions">
+                            <% const bookingDateTime = new Date(booking.booking_date + 'T' + booking.booking_time); %>
+                            <% const isPast = new Date() > bookingDateTime; %>
+                            <% if (!isPast && booking.status === 'Confirmed') { %>
+                                <button class="btn btn-cancel" onclick="cancelBooking('<%= booking.booking_id %>')">❌ Cancel Booking</button>
+                            <% } %>
+                            <button class="btn btn-edit" onclick="editBooking('<%= booking.booking_id %>')">✏️ View Details</button>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else if (userEmail) { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-title">No Bookings Yet</div>
+                    <p>You haven't made any table bookings yet. <a href="/api/dineout">Book a table now</a></p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        // Load bookings for the logged-in user (server passes `userEmail`)
+        const injectedUserEmail = //<%- JSON.stringify(userEmail || null) %>
+         document.getElementById('user-context').dataset.email|| 'null';
+
+        (async function init() {
+            if (injectedUserEmail) {
+                loadBookings(injectedUserEmail);
+                return;
+            }
+
+            // Fallback: try to get current user via auth endpoint
+            try {
+                const meRes = await fetch('/api/auth/me');
+                if (meRes.ok) {
+                    const meData = await meRes.json();
+                    const email = meData.user && meData.user.email;
+                    if (email) return loadBookings(email);
+                }
+            } catch (e) {
+                console.warn('Could not fetch current user for bookings page', e.message);
+            }
+
+            // If no user, show empty state prompting login
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔒</div>
+                    <div class="empty-state-title">Please log in to view your bookings</div>
+                    <p><a href="/login">Log in</a> or <a href="/register">Create an account</a> to see your booking history.</p>
+                </div>
+            `;
+        })();
+
+        async function loadBookings(email) {
+            const container = document.getElementById('bookingsList');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading your bookings...</p></div>';
+
+            try {
+                const response = await fetch(`/api/dineout/bookings?email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    container.innerHTML = `<div class="error-message">⚠️ ${data.message || 'Error loading bookings'}</div>`;
+                    return;
+                }
+
+                const bookings = data.bookings || [];
+
+                if (bookings.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📭</div>
+                            <div class="empty-state-title">No Bookings Yet</div>
+                            <p>You haven't made any table bookings yet. <a href="/api/dineout">Book a table now</a></p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = bookings.map(booking => renderBooking(booking)).join('');
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="error-message">⚠️ Error loading bookings. Please try again.</div>';
+            }
+        }
+
+        function renderBooking(booking) {
+            const bookingDateTime = new Date(`${booking.booking_date}T${booking.booking_time}`);
+            const formattedDate = bookingDateTime.toLocaleDateString('en-IN', { 
+                weekday: 'short', 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            const formattedTime = bookingDateTime.toLocaleTimeString('en-IN', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+
+            const isPastBooking = new Date() > bookingDateTime;
+            const isConfirmed = booking.status === 'Confirmed';
+            const canCancel = !isPastBooking && isConfirmed;
+
+            return `
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <div>
+                            <div class="booking-title">${escapeHtml(booking.restaurant_name)}</div>
+                            <div class="booking-id">Booking ID: ${escapeHtml(booking.booking_id)}</div>
+                        </div>
+                        <span class="status-badge status-${booking.status.toLowerCase()}">
+                            ${escapeHtml(booking.status)}
+                        </span>
+                    </div>
+
+                    <div class="booking-details">
+                        <div class="booking-detail-item">
+                            <div class="booking-detail-label">📅 Date & Time</div>
+                            <div class="booking-detail-value">${formattedDate} at ${formattedTime}</div>
+                        </div>
+                        <div class="booking-detail-item">
+                            <div class="booking-detail-label">👥 Guests</div>
+                            <div class="booking-detail-value">${escapeHtml(booking.guest_count)} ${booking.guest_count == 1 ? 'Guest' : 'Guests'}</div>
+                        </div>
+                        <div class="booking-detail-item">
+                            <div class="booking-detail-label">🍽️ Cuisine</div>
+                            <div class="booking-detail-value">${escapeHtml(booking.cuisine_type)}</div>
+                        </div>
+                        <div class="booking-detail-item">
+                            <div class="booking-detail-label">👤 Name</div>
+                            <div class="booking-detail-value">${escapeHtml(booking.user_name)}</div>
+                        </div>
+                    </div>
+
+                    ${booking.special_requests ? `
+                        <div class="booking-detail-item" style="grid-column: 1/-1;">
+                            <div class="booking-detail-label">📝 Special Requests</div>
+                            <div class="booking-detail-value">${escapeHtml(booking.special_requests)}</div>
+                        </div>
+                    ` : ''}
+
+                    <div class="booking-actions">
+                        ${canCancel ? `
+                            <button class="btn btn-cancel" onclick="cancelBooking('${escapeHtml(booking.booking_id)}')">
+                                ❌ Cancel Booking
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-edit" onclick="editBooking('${escapeHtml(booking.booking_id)}')">
+                            ✏️ View Details
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function cancelBooking(bookingId) {
+            if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+            try {
+                const response = await fetch(`/api/dineout/booking/${bookingId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // show success and reload to reflect server-side changes
+                    alert('✅ Booking cancelled successfully');
+                    window.location.reload();
+                } else {
+                    alert('⚠️ ' + (data.message || 'Error cancelling booking'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('⚠️ Error cancelling booking');
+            }
+        }
+
+        // Modal and inline edit logic
+        function openModal() {
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        async function editBooking(bookingId) {
+            try {
+                const res = await fetch(`/api/dineout/booking/${bookingId}`);
+                const data = await res.json();
+                if (!data.success) return alert('Could not load booking details');
+                const b = data.booking;
+
+                // populate form
+                document.getElementById('modalBookingId').value = b.booking_id;
+                document.getElementById('modalRestaurantName').textContent = b.restaurant_name;
+                document.getElementById('modalBookingDate').value = b.booking_date.split('T')[0];
+                document.getElementById('modalBookingTime').value = b.booking_time.slice(0,5);
+                document.getElementById('modalGuestCount').value = b.guest_count;
+                document.getElementById('modalSpecialRequests').value = b.special_requests || '';
+
+                openModal();
+            } catch (e) {
+                console.error(e);
+                alert('Error loading booking details');
+            }
+        }
+
+        // handle modal form submit for inline edit
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('bookingEditForm');
+            if (form) {
+                form.addEventListener('submit', async function(evt) {
+                    evt.preventDefault();
+                    const bookingId = document.getElementById('modalBookingId').value;
+                    const bookingDate = document.getElementById('modalBookingDate').value;
+                    const bookingTime = document.getElementById('modalBookingTime').value;
+                    const guestCount = document.getElementById('modalGuestCount').value;
+                    const specialRequests = document.getElementById('modalSpecialRequests').value;
+
+                    try {
+                        const res = await fetch(`/api/dineout/booking/${bookingId}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ bookingDate, bookingTime, guestCount, specialRequests })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            alert('✅ Booking updated');
+                            closeModal();
+                            window.location.reload();
+                        } else {
+                            alert('⚠️ ' + (data.message || 'Error updating booking'));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        alert('⚠️ Error updating booking');
+                    }
+                });
+            }
+        });
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+    <!-- Booking Edit Modal -->
+    <div id="bookingModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:60">
+        <div style="width:560px;background:#fff;border-radius:12px;padding:20px;max-width:95%;box-shadow:0 20px 40px rgba(0,0,0,0.4);">
+            <h3 style="margin-bottom:8px">Edit Booking</h3>
+            <p id="modalRestaurantName" style="color:#666;margin-top:0;margin-bottom:12px"></p>
+            <form id="bookingEditForm">
+                <input type="hidden" id="modalBookingId">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+                    <div>
+                        <label style="display:block;font-weight:600;margin-bottom:6px">Date</label>
+                        <input id="modalBookingDate" type="date" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px">
+                    </div>
+                    <div>
+                        <label style="display:block;font-weight:600;margin-bottom:6px">Time</label>
+                        <input id="modalBookingTime" type="time" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px">
+                    </div>
+                </div>
+                <div style="margin-bottom:12px">
+                    <label style="display:block;font-weight:600;margin-bottom:6px">Guests</label>
+                    <input id="modalGuestCount" type="number" min="1" required style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px">
+                </div>
+                <div style="margin-bottom:12px">
+                    <label style="display:block;font-weight:600;margin-bottom:6px">Special Requests</label>
+                    <textarea id="modalSpecialRequests" rows="3" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px"></textarea>
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end">
+                    <button type="button" onclick="closeModal()" class="btn btn-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-edit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+ 

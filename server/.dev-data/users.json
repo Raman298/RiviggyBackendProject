@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "_id": "c895eed4-c9d6-4291-80e7-64428c3973fb",
+      "name": "Test User",
+      "email": "testuser@example.com",
+      "password": "$2a$12$zhVO/7YOIGyGOli9sZzLFejCpa3RE53uyVaw0skixtaIRvx9juDDW",
+      "role": "user",
+      "avatar": "https://ui-avatars.com/api/?name=Test%20User&background=random&color=fff&bold=true",
+      "phone": "",
+      "address": "",
+      "createdAt": "2026-04-19T15:08:41.881Z",
+      "updatedAt": "2026-04-19T15:08:41.881Z"
+    }
+  ]
+}
