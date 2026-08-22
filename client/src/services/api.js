@@ -1,8 +1,13 @@
 
 import axios from 'axios';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL
+  || (process.env.NODE_ENV === 'production'
+    ? 'https://riviggybackendproject.onrender.com/api'
+    : '/api');
+
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || '/api',
+  baseURL: API_BASE_URL,
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' }
 });
