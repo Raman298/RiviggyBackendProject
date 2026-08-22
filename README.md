@@ -75,6 +75,16 @@ npm start     # starts on port 3000
 
 Open [http://localhost:3000](http://localhost:3000)
 
+### Deploy the frontend to GitHub Pages
+
+The repository includes a GitHub Actions workflow at `.github/workflows/deploy-pages.yml`.
+
+1. In GitHub, open **Settings > Pages** and set **Source** to **GitHub Actions**.
+2. If the backend is deployed separately, add a repository variable named `REACT_APP_API_URL` under **Settings > Secrets and variables > Actions > Variables**. Set it to the public API base URL, for example `https://your-api.example.com/api`.
+3. Push to `master`. GitHub Actions will build and deploy the `client` folder.
+
+GitHub Pages hosts static frontend files only. The Express server, MongoDB, uploads, Socket.IO, and payment endpoints must run on a separate backend host. Without `REACT_APP_API_URL`, the deployed frontend will use `/api`, which works locally through the React development proxy but is not available on GitHub Pages.
+
 ---
 
 ## Project Structure

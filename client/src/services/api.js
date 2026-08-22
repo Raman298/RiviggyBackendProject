@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.REACT_APP_API_URL || '/api',
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' }
 });
@@ -25,7 +25,7 @@ API.interceptors.response.use(
       // Only redirect if it's a getMe request (session validation)
       // Components will handle 401 for other requests
       if (error.config?.url?.includes('/auth/me')) {
-        window.location.href = '/login';
+        window.location.hash = '/login';
       }
     }
     return Promise.reject(error);
