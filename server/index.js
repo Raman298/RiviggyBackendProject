@@ -94,6 +94,7 @@ const autoSeed = async () => {
 // MongoDB connection
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/riviggy';
+const MONGO_CONNECT_TIMEOUT = Number(process.env.MONGO_CONNECT_TIMEOUT || 30000);
 global.__DEV_AUTH_STORE__ = false;
 
 // PostgreSQL initialization
@@ -102,15 +103,15 @@ const { initializeDatabase } = require('./config/postgresql');
 const connectDatabase = async () => {
   try {
     await mongoose.connect(MONGO_URI, {
-      serverSelectionTimeoutMS: 2000,
-      connectTimeoutMS: 2000
+      serverSelectionTimeoutMS: MONGO_CONNECT_TIMEOUT,
+      connectTimeoutMS: MONGO_CONNECT_TIMEOUT
     });
     console.log('MongoDB connected');
     
     // Initialize PostgreSQL database
     await initializeDatabase();
   } catch (err) {
-    const allowMemoryFallback = process.env.ENABLE_IN_MEMORY_DB !== 'false';
+    const allowMemoryFallback = process.env.NODE_ENV !== 'production' && process.env.ENABLE_IN_MEMORY_DB !== 'false';
     if (!allowMemoryFallback) {
       throw err;
     }
