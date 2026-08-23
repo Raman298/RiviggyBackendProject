@@ -40,7 +40,7 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', width: 160, height: 80, overflow: 'hidden' }}>
           <img
-            src="/logo.jpeg"
+            src={`${process.env.PUBLIC_URL}/logo.jpeg`}
             alt="Riviggy logo"
             style={{
               width: 160,
