@@ -275,7 +275,7 @@ export default function HomePage() {
 
           <div style={{ flex: '0 1 420px', width: '100%', maxWidth: 420 }}>
             <video
-              src="/hero-video.mp4"
+              src={`${process.env.PUBLIC_URL}/hero-video.mp4`}
               autoPlay
               muted
               loop
